@@ -1,0 +1,138 @@
+:root {
+  --text: #1a1a1a;
+  --muted: #666;
+  --bg: #fdfdfd;
+  --accent: #2b5fd9;
+  --code-bg: #282c34;
+  --border: #e5e5e5;
+  --max-width: 720px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+}
+
+.wrapper {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 0;
+}
+
+.site-header .wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.site-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.site-nav a {
+  margin-left: 1rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.site-nav a:hover { color: var(--accent); }
+
+main.wrapper { padding: 2.5rem 1.25rem; }
+
+.post-list {
+  list-style: none;
+  padding: 0;
+}
+
+.post-list li {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.post-date {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-right: 0.5rem;
+}
+
+.post-list a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.post-list a:hover { color: var(--accent); }
+
+.post-excerpt {
+  color: var(--muted);
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+}
+
+.post-header h1 { margin-bottom: 0.25rem; }
+
+.post-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.tag {
+  background: #eef1fb;
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.75rem;
+  margin-right: 0.25rem;
+}
+
+.post-content pre {
+  background: var(--code-bg);
+  color: #eee;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+}
+
+.post-content code {
+  font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+}
+
+.post-content :not(pre) > code {
+  background: #f0f0f0;
+  color: #c7254e;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+}
+
+.post-footer {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.post-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}

@@ -16,3 +16,11 @@ title: Home
   </li>
   {% endfor %}
 </ul>
+
+{% for post in site.posts %}
+{{ post.title }}
+{{ post.date | date: "%Y-%m-%d" }} {{ post.title }} {% if post.excerpt %}
+{{ post.excerpt | strip_html | truncatewords: 30 }}
+
+{% endif %}
+{% endfor %}

@@ -3,6 +3,7 @@ title: "Java Concurrency Basics: Taming ExecutorService"
 date: 2026-01-20 09:00:00 +0100
 tags: [java, concurrency]
 excerpt: "A quick tour of ExecutorService, why you should almost never call `new Thread()` directly, and how virtual threads change the calculus."
+image: /assets/images/example.png
 ---
 
 Manually spinning up `Thread` objects doesn't scale — you lose control over

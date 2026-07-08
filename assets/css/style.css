@@ -136,3 +136,105 @@ main.wrapper { padding: 2.5rem 1.25rem; }
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+/* ==========================================================================
+   Rouge syntax highlighting theme â€” IntelliJ IDEA "Light (Default)" palette
+   Drop this in assets/css/syntax.css and link it from your layout's <head>:
+   <link rel="stylesheet" href="{{ '/assets/css/syntax.css' | relative_url }}">
+   ========================================================================== */
+
+.highlight,
+.highlight pre {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.highlight table td { padding: 0 0.5em; }
+.highlight table pre { margin: 0; }
+
+/* line numbers column (rouge linenos="table") */
+.highlight .lineno {
+    color: #a6a6a6;
+    background-color: #f5f5f5;
+    padding-right: 0.75em;
+    padding-left: 0.5em;
+    text-align: right;
+    user-select: none;
+    border-right: 1px solid #e0e0e0;
+}
+
+.highlight pre {
+    padding: 0.9em 1em;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+/* ---- token colors (IntelliJ Light) ---- */
+
+.highlight .c,
+.highlight .c1,
+.highlight .cm,
+.highlight .cs { color: #808080; font-style: italic; }        /* comments */
+.highlight .cp { color: #808000; }                             /* preprocessor */
+
+.highlight .k,
+.highlight .kd,
+.highlight .kn,
+.highlight .kr,
+.highlight .kp,
+.highlight .ow { color: #000080; font-weight: bold; }          /* keywords */
+.highlight .kt,
+.highlight .kc { color: #000080; font-weight: bold; }          /* types / const keywords */
+
+.highlight .s,
+.highlight .s1,
+.highlight .s2,
+.highlight .sb,
+.highlight .sc,
+.highlight .sd,
+.highlight .se,
+.highlight .sh,
+.highlight .si,
+.highlight .sx,
+.highlight .sr,
+.highlight .ss { color: #008000; }                             /* strings */
+
+.highlight .m,
+.highlight .mf,
+.highlight .mh,
+.highlight .mi,
+.highlight .mo,
+.highlight .il { color: #0000ff; }                             /* numbers */
+
+.highlight .nc,
+.highlight .vc { color: #000000; font-weight: bold; }          /* class names */
+.highlight .nf { color: #000000; font-weight: bold; }          /* method/function names */
+.highlight .nd { color: #808000; }                             /* annotations, e.g. @Entity */
+.highlight .na { color: #808000; }                              /* attribute names */
+.highlight .nb,
+.highlight .bp { color: #000080; }                              /* builtins */
+.highlight .nn { color: #000000; }                               /* namespace */
+.highlight .no { color: #000080; font-weight: bold; }             /* constants */
+.highlight .ne { color: #000080; font-weight: bold; }             /* exception names */
+.highlight .nl { color: #000000; }                                /* labels */
+.highlight .nv,
+.highlight .vg,
+.highlight .vi { color: #000000; }                                /* variables */
+.highlight .n,
+.highlight .nx,
+.highlight .py { color: #000000; }                                /* plain names */
+
+.highlight .o,
+.highlight .p { color: #000000; }                                 /* operators / punctuation */
+
+/* JSON-specific: rouge tags string keys as "na" (attribute) or "s2" depending on version */
+.highlight .highlight .na { color: #660e7a; }
+
+.highlight .err { color: #ff0000; background-color: #ffe0e0; }
+.highlight .gh { color: #000080; font-weight: bold; }
+.highlight .gu { color: #800080; font-weight: bold; }
+.highlight .gd { color: #a00000; background-color: #ffdddd; }
+.highlight .gi { color: #008000; background-color: #ddffdd; }

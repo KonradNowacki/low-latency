@@ -273,11 +273,11 @@ main.wrapper { padding: 2.5rem 1.25rem; }
 }
 
 .post-thumb {
-    width: 220px;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    border-radius: 6px;
     background-color: #f2f2f2;
+    width: 680px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 10px;
 }
 
 .post-thumb img {

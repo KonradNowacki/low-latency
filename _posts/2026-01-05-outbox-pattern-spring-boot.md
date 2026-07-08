@@ -13,7 +13,7 @@ change, then relaying it to Kafka asynchronously (often via Debezium CDC).
 
 ## The entity
 
-```java
+{% highlight java linenos %}
 @Entity
 @Table(name = "outbox_event")
 public class OutboxEvent {
@@ -33,11 +33,11 @@ public class OutboxEvent {
 
     // getters and setters omitted
 }
-```
+{% endhighlight %}
 
 ## Writing to the outbox in the same transaction
 
-```java
+{% highlight java linenos %}
 @Service
 public class OrderService {
 
@@ -77,7 +77,7 @@ public class OrderService {
         }
     }
 }
-```
+{% endhighlight %}
 
 Because `orderRepository.save` and `outboxRepository.save` happen inside the
 same `@Transactional` boundary, they either both commit or both roll back.
@@ -86,20 +86,20 @@ to Kafka — no dual-write problem, no distributed transaction needed.
 
 ## Debezium connector config
 
-```json
+{% highlight json linenos %}
 {
-  "name": "order-outbox-connector",
-  "config": {
-    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-    "database.hostname": "postgres",
-    "database.dbname": "orders",
-    "table.include.list": "public.outbox_event",
-    "transforms": "outbox",
-    "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
-    "transforms.outbox.route.by.field": "aggregateType"
-  }
+"name": "order-outbox-connector",
+"config": {
+"connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+"database.hostname": "postgres",
+"database.dbname": "orders",
+"table.include.list": "public.outbox_event",
+"transforms": "outbox",
+"transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+"transforms.outbox.route.by.field": "aggregateType"
 }
-```
+}
+{% endhighlight %}
 
 That's the whole pattern in miniature: one table, one transaction, one CDC
 connector — and your downstream consumers get a reliable stream of domain

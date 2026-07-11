@@ -408,6 +408,8 @@ main.wrapper { padding: 2.5rem 1.25rem; }
 
 .post-card-image {
     max-width: 680px;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
 }
 
 .post-card-content {
@@ -419,3 +421,8 @@ main.wrapper { padding: 2.5rem 1.25rem; }
     }
 }
 
+.posts {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

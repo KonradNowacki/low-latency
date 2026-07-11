@@ -58,9 +58,7 @@ alt="{{ post.title }}">
       </span>
 
       {% if post.tags %}
-        <div>
-            <span class="meta-separator">•</span>
-    
+        <div> 
             {% for tag in post.tags %}
               <span class="tag">{{ tag }}</span>
             {% endfor %}

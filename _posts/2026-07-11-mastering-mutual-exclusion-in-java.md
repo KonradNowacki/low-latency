@@ -1,8 +1,15 @@
 ---
-title: "Implementing the Outbox Pattern with Spring Boot and Kafka"
-date: 2026-01-05 09:00:00 +0100
-tags: [java, spring-boot, kafka, microservices]
-excerpt: "A minimal example of how to publish events reliably from a Spring Boot service using the transactional outbox pattern."
+layout: post
+title: "Mastering Mutual Exclusion In Java"
+date: 2026-07-10
+author: "Konrad Nowacki"
+image: "/assets/images/mastering-mutual-exclusion-in-java.png"
+reading_time: "10 min read"
+tags:
+  - Mutual Exclusion
+  - Java
+  - Locks
+description: "Learn how mutual exclusion works in Java, why race conditions occur, and when to use synchronized, Lock, ReadWriteLock, StampedLock, and other concurrency primitives."
 ---
 
 When a service needs to update its database **and** publish an event about that

@@ -1,21 +1,78 @@
 ---
 layout: default
-title: Home
+title: Blog
 ---
 
-# Latest posts
+<h1>Posts</h1>
 
-<ul class="post-list">
-  {% for post in site.posts %}
-  <li>
-    <img class="post-thumb" src="{{ post.image | default: '/assets/images/default-cover.png' | relative_url }}" alt="{{ post.title }}" loading="lazy">
-    <br />
-    <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
-    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-    {% if post.excerpt %}
-      <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+<div class="posts">
+
+{% for post in site.posts %}
+
+<article class="post-card">
+
+{% if post.image %}
+<a href="{{ post.url | relative_url }}">
+<img
+class="post-card-image"
+src="{{ post.image | relative_url }}"
+alt="{{ post.title }}">
+</a>
+{% endif %}
+
+  <div class="post-card-content">
+
+    <h2>
+      <a href="{{ post.url | relative_url }}">
+        {{ post.title }}
+      </a>
+    </h2>
+
+    {% if post.description %}
+    <p class="post-description">
+      {{ post.description }}
+    </p>
     {% endif %}
-  </li>
-  {% endfor %}
-</ul>
 
+    <div class="post-meta-row">
+
+      <img
+        class="avatar-small"
+        src="/assets/images/konrad_avatar.png"
+        alt="{{ post.author }}">
+
+      <span class="author-name">
+        {{ post.author }}
+      </span>
+
+      <span class="meta-separator">•</span>
+
+      <span>
+        {{ post.date | date: "%B %-d, %Y" }}
+      </span>
+
+      <span class="meta-separator">•</span>
+
+      <span>
+        {{ post.reading_time }}
+      </span>
+
+      {% if post.tags %}
+        <div>
+            <span class="meta-separator">•</span>
+    
+            {% for tag in post.tags %}
+              <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</article>
+
+{% endfor %}
+
+</div>

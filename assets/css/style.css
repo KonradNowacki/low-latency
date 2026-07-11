@@ -12,7 +12,8 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;*/
+  font-family: "Inter", system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
   line-height: 1.6;
@@ -256,10 +257,10 @@ main.wrapper { padding: 2.5rem 1.25rem; }
 
 .post-card {
     display: flex;
-    gap: 1.25rem;
     align-items: flex-start;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid #e5e5e5;
+    flex-direction: column;
 }
 
 .post-card:last-child {
@@ -272,25 +273,6 @@ main.wrapper { padding: 2.5rem 1.25rem; }
     display: block;
 }
 
-.post-thumb {
-    background-color: #f2f2f2;
-    width: 680px;
-    height: 200px;
-    overflow: hidden;
-    border-radius: 10px;
-}
-
-.post-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.2s ease;
-}
-
-.post-thumb-link:hover img {
-    transform: scale(1.03);
-}
 
 .post-body {
     flex: 1 1 auto;
@@ -333,3 +315,107 @@ main.wrapper { padding: 2.5rem 1.25rem; }
         width: 100%;
     }
 }
+
+.avatar-small {
+    max-width: 48px;
+    max-height: 48px;
+    border-radius: 50%;
+}
+
+.post-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.author {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0 1.5rem;
+}
+
+.author img {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: .75rem;
+}
+
+.author span {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .6rem;
+    color: #666;
+    font-size: .95rem;
+}
+
+.tag {
+    background: #f4f4f4;
+    border-radius: 999px;
+    padding: .25rem .7rem;
+    font-size: .85rem;
+}
+
+.post-meta-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.avatar-small {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-name {
+    font-weight: 600;
+    color: #222;
+}
+
+.meta-separator {
+    color: #999;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 0.2rem 0.7rem;
+
+    background: #f4f4f4;
+    border-radius: 999px;
+
+    font-size: 0.8rem;
+    color: #444;
+}
+
+
+
+.post-card-image {
+    max-width: 680px;
+}
+
+.post-card-content {
+    margin-top: 0;
+    h2 {
+        color: black;
+        text-underline-mode: unset;
+        margin-top: 0;
+    }
+}
+

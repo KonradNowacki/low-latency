@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2026-07-14T16:57:20+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">My Backend Blog</title><subtitle>Notes on distributed systems, JVM internals, and building things that scale.</subtitle><author><name>Your Name</name></author><entry><title type="html">Mastering Mutual Exclusion in Java</title><link href="http://localhost:4000/2026/07/14/mastering-mutual-exclusion-in-java/" rel="alternate" type="text/html" title="Mastering Mutual Exclusion in Java" /><published>2026-07-14T00:00:00+02:00</published><updated>2026-07-14T00:00:00+02:00</updated><id>http://localhost:4000/2026/07/14/mastering-mutual-exclusion-in-java</id><content type="html" xml:base="http://localhost:4000/2026/07/14/mastering-mutual-exclusion-in-java/"><![CDATA[<p>Every multithreaded program is eventually going to hit the problem of two concurrent threads trying to read, write 
+or modify an object stored in a shared memory.</p>
+
+<p>Java offers many tools to deal with this problem, one better than the other, each coming with its own set of pros
+and cons.</p>
+
+<p>This article is going to introduce the problem, give an overview of the available solutions (always with examples!)
+and introduce you, my dear reader, to the world of concurrent programming in Java.</p>
+
+<h2 id="understanding-the-problem">Understanding the problem</h2>
+
+<p>====================================</p>
+
+<hr />
+<p>layout: post
+title: “Mastering Mutual Exclusion in Java”
+date: 2026-07-14
+categories: [java, concurrency]
+tags: [concurrency, synchronized, locks, jvm]
+excerpt: “A guided tour of every mutual exclusion mechanism in Java — what problem each one solves and when to reach for it. First post in a deep-dive series.”
+—</p>
+
+<p>Every concurrent program eventually runs into the same wall: two threads touching the same piece of state at the same time. Java gives you a surprising number of tools to stop that from going wrong — <code class="language-plaintext highlighter-rouge">synchronized</code>, <code class="language-plaintext highlighter-rouge">ReentrantLock</code>, read-write locks, atomics, and more. The trouble is that most tutorials introduce exactly one of them (<code class="language-plaintext highlighter-rouge">synchronized</code>) and stop, leaving you to discover the rest by accident, usually during a production incident.</p>
+
+<p>This post is a map of the whole territory. It stays deliberately mid-level: no monitor internals, no AQS queue mechanics, no CAS retry loops — just what each mechanism does, what it costs you, and when it’s the right call. Each section links to a dedicated deep-dive chapter where we’ll open the hood.</p>
+
+<h2 id="what-mutual-exclusion-actually-protects-against">What mutual exclusion actually protects against</h2>
+
+<p>Before picking a tool, it helps to separate three problems that get lumped together as “thread safety”:</p>
+
+<ul>
+  <li><strong>Race condition</strong> — the outcome of your program depends on the timing of thread execution, when it shouldn’t.</li>
+  <li><strong>Lost update</strong> — two threads read the same value, both compute an update, and one overwrite silently wins, discarding the other.</li>
+  <li><strong>Visibility issue</strong> — one thread writes a value, and another thread never sees the write because of caching or reordering, even without any interleaving problem.</li>
+</ul>
+
+<p>Mutual exclusion — letting only one thread touch a piece of state at a time — solves the first two directly, and solves the third as a side effect (entering and leaving a lock also creates the memory barriers needed for visibility).</p>
+
+<p>Here’s the classic lost-update example:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">increment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">count</span><span class="o">++;</span> <span class="c1">// NOT atomic: read, add 1, write — three separate steps</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">count</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Run two threads calling <code class="language-plaintext highlighter-rouge">increment()</code> a million times each, and <code class="language-plaintext highlighter-rouge">get()</code> will almost never return 2,000,000. <code class="language-plaintext highlighter-rouge">count++</code> decompiles to a read, an add, and a write — and another thread can slip in between any of those steps.</p>
+
+<p>Now let’s fix it, one mechanism at a time.</p>
+
+<h2 id="synchronized--the-default-tool"><code class="language-plaintext highlighter-rouge">synchronized</code> — the default tool</h2>
+
+<p><code class="language-plaintext highlighter-rouge">synchronized</code> is Java’s built-in mutual exclusion mechanism: every object carries an implicit lock (its <em>monitor</em>), and only one thread can hold it at a time.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">increment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">count</span><span class="o">++;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">int</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">count</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Or, locking on an explicit object instead of <code class="language-plaintext highlighter-rouge">this</code>, which is usually the better habit since it keeps the lock private to your class:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Object</span> <span class="n">lock</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">increment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">synchronized</span> <span class="o">(</span><span class="n">lock</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">count</span><span class="o">++;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">synchronized</span> <span class="o">(</span><span class="n">lock</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">count</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>What it gives you:</strong> correctness, simplicity, and — since JDK 6 — genuinely good performance for uncontended or lightly contended locks. It’s also impossible to forget to release: the lock is released automatically when the block exits, even via an exception.</p>
+
+<p><strong>Its one real limitation:</strong> it’s inflexible. You can’t try to acquire the lock without blocking, you can’t time out, you can’t interrupt a thread that’s waiting on it, and you can’t ask for a “fair” ordering among waiting threads. When you need any of that, you reach for <code class="language-plaintext highlighter-rouge">ReentrantLock</code>.</p>
+
+<!-- → Deep dive: "synchronized Internals: Monitors, Mark Words, and Lock Inflation" -->
+
+<h2 id="reentrantlock--when-you-need-more-control"><code class="language-plaintext highlighter-rouge">ReentrantLock</code> — when you need more control</h2>
+
+<p><code class="language-plaintext highlighter-rouge">ReentrantLock</code>, from <code class="language-plaintext highlighter-rouge">java.util.concurrent.locks</code>, does the same job as <code class="language-plaintext highlighter-rouge">synchronized</code> but as an ordinary object instead of a language keyword — which means it can expose capabilities <code class="language-plaintext highlighter-rouge">synchronized</code> structurally can’t.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.concurrent.locks.ReentrantLock</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">ReentrantLock</span> <span class="n">lock</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ReentrantLock</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">increment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">count</span><span class="o">++;</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span> <span class="c1">// never forget this — it won't happen automatically</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">count</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Notice the trade-off immediately: you’re now responsible for calling <code class="language-plaintext highlighter-rouge">unlock()</code>, and it must be in a <code class="language-plaintext highlighter-rouge">finally</code> block. That’s the price for the extra power:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="o">(</span><span class="n">lock</span><span class="o">.</span><span class="na">tryLock</span><span class="o">())</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="c1">// got the lock without blocking — do the work</span>
+    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="c1">// someone else has it — do something else instead of waiting</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>You can also time out (<code class="language-plaintext highlighter-rouge">tryLock(1, TimeUnit.SECONDS)</code>), respond to interruption (<code class="language-plaintext highlighter-rouge">lockInterruptibly()</code>), and request fairness (<code class="language-plaintext highlighter-rouge">new ReentrantLock(true)</code>) so threads acquire the lock roughly in the order they asked for it — useful for avoiding starvation, at some throughput cost.</p>
+
+<!-- → Deep dive: "ReentrantLock and AQS Under the Hood" -->
+
+<h2 id="read-write-locks--when-reads-dominate">Read-write locks — when reads dominate</h2>
+
+<p>Both <code class="language-plaintext highlighter-rouge">synchronized</code> and <code class="language-plaintext highlighter-rouge">ReentrantLock</code> are exclusive: even two threads that only want to <em>read</em> shared state have to take turns. For workloads where reads vastly outnumber writes — a configuration cache, a routing table — that’s wasted serialization.</p>
+
+<p><code class="language-plaintext highlighter-rouge">ReentrantReadWriteLock</code> splits the lock in two: any number of readers can hold the read lock simultaneously, but a writer needs exclusive access.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.concurrent.locks.ReentrantReadWriteLock</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Cache</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">ReentrantReadWriteLock</span> <span class="n">rwLock</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ReentrantReadWriteLock</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">value</span> <span class="o">=</span> <span class="s">"initial"</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">rwLock</span><span class="o">.</span><span class="na">readLock</span><span class="o">().</span><span class="na">lock</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">rwLock</span><span class="o">.</span><span class="na">readLock</span><span class="o">().</span><span class="na">unlock</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="nc">String</span> <span class="n">newValue</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">rwLock</span><span class="o">.</span><span class="na">writeLock</span><span class="o">().</span><span class="na">lock</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">newValue</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">rwLock</span><span class="o">.</span><span class="na">writeLock</span><span class="o">().</span><span class="na">unlock</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">StampedLock</code> (Java 8+) goes further with an <em>optimistic read</em> mode: readers don’t take a lock at all, they just validate afterward that nothing changed underneath them, and retry with a real lock only if it did. It’s faster under heavy read contention but noticeably trickier to use correctly — no reentrancy, and you have to remember the validation step.</p>
+
+<p>We’ll benchmark all three against plain <code class="language-plaintext highlighter-rouge">synchronized</code> in the dedicated chapter — the read-heavy numbers are the ones worth seeing for yourself.</p>
+
+<!-- → Deep dive: "ReentrantReadWriteLock vs StampedLock: Optimistic Reads Explained" -->
+
+<h2 id="lock-free-alternatives--when-locks-are-overkill">Lock-free alternatives — when locks are overkill</h2>
+
+<p>Sometimes the shared state is small enough — a single counter, a single reference — that taking a full lock is more overhead than the operation itself. Java’s <code class="language-plaintext highlighter-rouge">java.util.concurrent.atomic</code> package gives you compare-and-swap–based updates with no locking at all:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.concurrent.atomic.AtomicInteger</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">AtomicInteger</span> <span class="n">count</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AtomicInteger</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">increment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">count</span><span class="o">.</span><span class="na">incrementAndGet</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">count</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>This looks like a strict upgrade over <code class="language-plaintext highlighter-rouge">synchronized</code>, and under low-to-moderate contention it is — no thread ever blocks. But it’s not free of cost: under <em>heavy</em> contention, many threads retrying a compare-and-swap loop against the same memory location can actually perform worse than a lock, because every failed attempt is wasted work plus a fresh cache-line bounce. We’ll measure exactly where that crossover happens in the lock-free chapter — it’s one of the more surprising results in this whole series.</p>
+
+<p>For the specific, very common case of a hot counter under high write contention, <code class="language-plaintext highlighter-rouge">LongAdder</code> is usually the right answer — it spreads updates across internal cells to reduce contention, at the cost of a slightly more expensive read:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.concurrent.atomic.LongAdder</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">LongAdder</span> <span class="n">count</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LongAdder</span><span class="o">();</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">increment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">count</span><span class="o">.</span><span class="na">increment</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">long</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">count</span><span class="o">.</span><span class="na">sum</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<!-- → Deep dive: "Lock-Free Programming in Java: CAS, Atomics, and When They Lose" -->
+
+<h2 id="virtual-threads-and-an-old-rule-that-changed">Virtual threads and an old rule that changed</h2>
+
+<p>Virtual threads (Project Loom, finalized in JDK 21) run many logical threads on top of a small pool of OS “carrier” threads. For a while, this interacted badly with <code class="language-plaintext highlighter-rouge">synchronized</code>: holding a <code class="language-plaintext highlighter-rouge">synchronized</code> block would <em>pin</em> the virtual thread to its carrier, blocking that carrier entirely instead of letting it serve other virtual threads — defeating much of the point of using virtual threads in the first place.</p>
+
+<p>As of JDK 24, this pinning behavior was largely fixed at the JVM level, so <code class="language-plaintext highlighter-rouge">synchronized</code> is safe to use with virtual threads in most cases again. If you’re on an earlier JDK, or writing code that has to run on one, <code class="language-plaintext highlighter-rouge">ReentrantLock</code> avoids the issue entirely, since it was never affected. Worth double-checking the exact JDK version behavior before you rely on either claim in production — this is an area that moved fast.</p>
+
+<p>This is the first post in a series on mutual exclusion in Java. Each mechanism above gets its own deep-dive with JMH benchmarks and internals — links will go live as each chapter is published.</p>]]></content><author><name>Your Name</name></author><category term="java" /><category term="concurrency" /><category term="concurrency" /><category term="synchronized" /><category term="locks" /><summary type="html"><![CDATA[A guided tour of every mutual exclusion mechanism in Java — what problem each one solves and when to reach for it. First post in a deep-dive series.]]></summary></entry></feed>

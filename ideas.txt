@@ -1,0 +1,19 @@
+Concurrency
+[] concurrent collections
+[] mutual exclusion
+[] structured concurrency
+[] executor
+[] virtual threads
+
+JVM Tuning
+[] GC, young/old generation VisualVM
+[] JMM
+
+Project Reactor
+[]
+
+Kafka
+[]
+
+Spring
+[]

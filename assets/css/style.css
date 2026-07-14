@@ -173,72 +173,72 @@ main.wrapper { padding: 2.5rem 1.25rem; }
     line-height: 1.5;
 }
 
-/* ---- token colors (IntelliJ Light) ---- */
+/*!* ---- token colors (IntelliJ Light) ---- *!*/
 
-.highlight .c,
-.highlight .c1,
-.highlight .cm,
-.highlight .cs { color: #808080; font-style: italic; }        /* comments */
-.highlight .cp { color: #808000; }                             /* preprocessor */
+/*.highlight .c,*/
+/*.highlight .c1,*/
+/*.highlight .cm,*/
+/*.highlight .cs { color: #808080; font-style: italic; }        !* comments *!*/
+/*.highlight .cp { color: #808000; }                             !* preprocessor *!*/
 
-.highlight .k,
-.highlight .kd,
-.highlight .kn,
-.highlight .kr,
-.highlight .kp,
-.highlight .ow { color: #000080; font-weight: bold; }          /* keywords */
-.highlight .kt,
-.highlight .kc { color: #000080; font-weight: bold; }          /* types / const keywords */
+/*.highlight .k,*/
+/*.highlight .kd,*/
+/*.highlight .kn,*/
+/*.highlight .kr,*/
+/*.highlight .kp,*/
+/*.highlight .ow { color: #000080; font-weight: bold; }          !* keywords *!*/
+/*.highlight .kt,*/
+/*.highlight .kc { color: #000080; font-weight: bold; }          !* types / const keywords *!*/
 
-.highlight .s,
-.highlight .s1,
-.highlight .s2,
-.highlight .sb,
-.highlight .sc,
-.highlight .sd,
-.highlight .se,
-.highlight .sh,
-.highlight .si,
-.highlight .sx,
-.highlight .sr,
-.highlight .ss { color: #008000; }                             /* strings */
+/*.highlight .s,*/
+/*.highlight .s1,*/
+/*.highlight .s2,*/
+/*.highlight .sb,*/
+/*.highlight .sc,*/
+/*.highlight .sd,*/
+/*.highlight .se,*/
+/*.highlight .sh,*/
+/*.highlight .si,*/
+/*.highlight .sx,*/
+/*.highlight .sr,*/
+/*.highlight .ss { color: #008000; }                             !* strings *!*/
 
-.highlight .m,
-.highlight .mf,
-.highlight .mh,
-.highlight .mi,
-.highlight .mo,
-.highlight .il { color: #0000ff; }                             /* numbers */
+/*.highlight .m,*/
+/*.highlight .mf,*/
+/*.highlight .mh,*/
+/*.highlight .mi,*/
+/*.highlight .mo,*/
+/*.highlight .il { color: #0000ff; }                             !* numbers *!*/
 
-.highlight .nc,
-.highlight .vc { color: #000000; font-weight: bold; }          /* class names */
-.highlight .nf { color: #000000; font-weight: bold; }          /* method/function names */
-.highlight .nd { color: #808000; }                             /* annotations, e.g. @Entity */
-.highlight .na { color: #808000; }                              /* attribute names */
-.highlight .nb,
-.highlight .bp { color: #000080; }                              /* builtins */
-.highlight .nn { color: #000000; }                               /* namespace */
-.highlight .no { color: #000080; font-weight: bold; }             /* constants */
-.highlight .ne { color: #000080; font-weight: bold; }             /* exception names */
-.highlight .nl { color: #000000; }                                /* labels */
-.highlight .nv,
-.highlight .vg,
-.highlight .vi { color: #000000; }                                /* variables */
-.highlight .n,
-.highlight .nx,
-.highlight .py { color: #000000; }                                /* plain names */
+/*.highlight .nc,*/
+/*.highlight .vc { color: #000000; font-weight: bold; }          !* class names *!*/
+/*.highlight .nf { color: #000000; font-weight: bold; }          !* method/function names *!*/
+/*.highlight .nd { color: #808000; }                             !* annotations, e.g. @Entity *!*/
+/*.highlight .na { color: #808000; }                              !* attribute names *!*/
+/*.highlight .nb,*/
+/*.highlight .bp { color: #000080; }                              !* builtins *!*/
+/*.highlight .nn { color: #000000; }                               !* namespace *!*/
+/*.highlight .no { color: #000080; font-weight: bold; }             !* constants *!*/
+/*.highlight .ne { color: #000080; font-weight: bold; }             !* exception names *!*/
+/*.highlight .nl { color: #000000; }                                !* labels *!*/
+/*.highlight .nv,*/
+/*.highlight .vg,*/
+/*.highlight .vi { color: #000000; }                                !* variables *!*/
+/*.highlight .n,*/
+/*.highlight .nx,*/
+/*.highlight .py { color: #000000; }                                !* plain names *!*/
 
-.highlight .o,
-.highlight .p { color: #000000; }                                 /* operators / punctuation */
+/*.highlight .o,*/
+/*.highlight .p { color: #000000; }                                 !* operators / punctuation *!*/
 
-/* JSON-specific: rouge tags string keys as "na" (attribute) or "s2" depending on version */
-.highlight .highlight .na { color: #660e7a; }
+/*!* JSON-specific: rouge tags string keys as "na" (attribute) or "s2" depending on version *!*/
+/*.highlight .highlight .na { color: #660e7a; }*/
 
-.highlight .err { color: #ff0000; background-color: #ffe0e0; }
-.highlight .gh { color: #000080; font-weight: bold; }
-.highlight .gu { color: #800080; font-weight: bold; }
-.highlight .gd { color: #a00000; background-color: #ffdddd; }
-.highlight .gi { color: #008000; background-color: #ddffdd; }
+/*.highlight .err { color: #ff0000; background-color: #ffe0e0; }*/
+/*.highlight .gh { color: #000080; font-weight: bold; }*/
+/*.highlight .gu { color: #800080; font-weight: bold; }*/
+/*.highlight .gd { color: #a00000; background-color: #ffdddd; }*/
+/*.highlight .gi { color: #008000; background-color: #ddffdd; }*/
 
 
 /* ==========================================================================
@@ -425,4 +425,285 @@ main.wrapper { padding: 2.5rem 1.25rem; }
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* ==========================================================================
+   claude-style.css
+   A Jekyll post stylesheet modeled on the Claude.ai chat interface look:
+   warm neutral background, restrained serif/sans mix, soft borders,
+   generous line-height, understated accent color.
+   Designed to sit alongside an existing Rouge/IntelliJ code theme —
+   this file intentionally leaves code block *syntax colors* alone and
+   only styles the surrounding chrome (padding, radius, borders).
+   ========================================================================== */
+
+:root {
+    /* Core palette — warm neutrals, not stark white/black */
+    --claude-bg: #faf9f6;
+    --claude-surface: #ffffff;
+    --claude-text: #2d2b26;
+    --claude-text-muted: #6b6862;
+    --claude-border: #e6e3dc;
+    --claude-border-strong: #d8d4ca;
+
+    /* Accent — muted terracotta/clay, used sparingly */
+    --claude-accent: #c2694b;
+    --claude-accent-hover: #a8543a;
+    --claude-accent-soft: #f3e6e0;
+
+    /* Code chrome (not syntax colors — those come from Rouge) */
+    --claude-code-bg: #f4f2ed;
+    --claude-code-border: #e2ded3;
+    --claude-inline-code-bg: #efece4;
+
+    /* Typography scale */
+    --claude-font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter",
+    Helvetica, Arial, sans-serif;
+    --claude-font-mono: "JetBrains Mono", "Fira Code", "SFMono-Regular",
+    Consolas, Menlo, monospace;
+
+    --claude-radius-sm: 6px;
+    --claude-radius-md: 10px;
+    --claude-radius-lg: 14px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Page shell                                                              */
+/* ---------------------------------------------------------------------- */
+
+body {
+    background-color: var(--claude-bg);
+    color: var(--claude-text);
+    font-family: var(--claude-font-body);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+
+.post,
+.post-content,
+article.post {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    background-color: var(--claude-surface);
+    border: 1px solid var(--claude-border);
+    border-radius: var(--claude-radius-lg);
+}
+
+@media (max-width: 640px) {
+    .post,
+    .post-content,
+    article.post {
+        padding: 2rem 1.25rem 3rem;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Post header                                                             */
+/* ---------------------------------------------------------------------- */
+
+.post-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--claude-border);
+}
+
+.post-title,
+.post h1:first-child {
+    font-size: 2.1rem;
+    font-weight: 650;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--claude-text);
+    margin: 0 0 0.6rem;
+}
+
+.post-meta {
+    font-size: 0.9rem;
+    color: var(--claude-text-muted);
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.post-meta .tag {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    background-color: var(--claude-accent-soft);
+    color: var(--claude-accent-hover);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Prose                                                                    */
+/* ---------------------------------------------------------------------- */
+
+.post-content h2 {
+    font-size: 1.5rem;
+    font-weight: 650;
+    margin: 2.75rem 0 1rem;
+    color: var(--claude-text);
+    letter-spacing: -0.005em;
+}
+
+.post-content h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 2rem 0 0.85rem;
+    color: var(--claude-text);
+}
+
+.post-content p {
+    margin: 0 0 1.25rem;
+    color: var(--claude-text);
+}
+
+.post-content p.lead,
+.post-content > p:first-of-type {
+    color: var(--claude-text);
+}
+
+.post-content strong {
+    font-weight: 650;
+}
+
+.post-content em {
+    color: var(--claude-text-muted);
+    font-style: italic;
+}
+
+.post-content a {
+    color: var(--claude-accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--claude-accent-soft);
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.post-content a:hover {
+    color: var(--claude-accent-hover);
+    border-bottom-color: var(--claude-accent);
+}
+
+.post-content ul,
+.post-content ol {
+    margin: 0 0 1.25rem;
+    padding-left: 1.4rem;
+}
+
+.post-content li {
+    margin-bottom: 0.45rem;
+}
+
+.post-content li::marker {
+    color: var(--claude-accent);
+}
+
+.post-content blockquote {
+    margin: 1.5rem 0;
+    padding: 0.75rem 1.25rem;
+    border-left: 3px solid var(--claude-accent);
+    background-color: var(--claude-accent-soft);
+    border-radius: 0 var(--claude-radius-sm) var(--claude-radius-sm) 0;
+    color: var(--claude-text-muted);
+}
+
+.post-content hr {
+    border: none;
+    border-top: 1px solid var(--claude-border);
+    margin: 2.5rem 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Code — chrome only; syntax colors stay with Rouge/IntelliJ theme        */
+/* ---------------------------------------------------------------------- */
+
+.post-content code {
+    font-family: var(--claude-font-mono);
+    font-size: 0.87em;
+}
+
+.post-content :not(pre) > code {
+    background-color: var(--claude-inline-code-bg);
+    color: var(--claude-accent-hover);
+    padding: 0.15em 0.4em;
+    border-radius: var(--claude-radius-sm);
+    font-weight: 500;
+}
+
+.post-content pre,
+.post-content .highlight {
+    background-color: var(--claude-code-bg);
+    border: 1px solid var(--claude-code-border);
+    border-radius: var(--claude-radius-md);
+    padding: 1.1rem 1.3rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    line-height: 1.55;
+}
+
+.post-content pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-weight: 400;
+}
+
+/* Optional language label on top of code blocks — add
+   <div class="code-label">Java</div> right before a ```java block
+   if you want this. Purely decorative, safe to ignore/remove. */
+.post-content .code-label {
+    font-family: var(--claude-font-mono);
+    font-size: 0.75rem;
+    color: var(--claude-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1.5rem 0 -1rem;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Tables (kept for future use even though this post has none)             */
+/* ---------------------------------------------------------------------- */
+
+.post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+}
+
+.post-content th,
+.post-content td {
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--claude-border);
+    text-align: left;
+}
+
+.post-content th {
+    background-color: var(--claude-code-bg);
+    font-weight: 650;
+}
+
+.post-content tr:nth-child(even) td {
+    background-color: #fbfaf7;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Series callout box (for "this is part of a series" footer notes)        */
+/* ---------------------------------------------------------------------- */
+
+.post-content p:last-child {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--claude-code-bg);
+    border: 1px solid var(--claude-border);
+    border-radius: var(--claude-radius-md);
+    color: var(--claude-text-muted);
+    font-size: 0.95rem;
 }
